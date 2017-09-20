@@ -1,3 +1,7 @@
+# simple coin flipping example to demonstrate PMF/PDF
+
+# TODO Comment
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -14,6 +18,6 @@ if __name__ == "__main__":
     plt.xlabel('Number of Tails')
     plt.ylabel('Probability')
     plt.title('Probabilty Mass Function for number of Tails')
-    plt.axis([0, 4, 0, 4000])
+    # plt.axis([0, 4, 0, 4000])
     plt.grid(True)
     plt.show()

@@ -1,7 +1,7 @@
 import pandas as pd
 from scipy import stats
 
-data = pd.read_csv('brain_size.csv', sep=';', na_values='.')
+data = pd.read_csv('../data/brain_size.csv', sep=';', na_values='.')
 print(data.head())
 print(data.describe())
 

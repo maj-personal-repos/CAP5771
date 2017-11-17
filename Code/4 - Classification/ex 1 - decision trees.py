@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
-from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
 import graphviz
 
 
@@ -9,14 +9,14 @@ import graphviz
 iris = load_iris()
 
 # create Decision Tree Classifier object
-dt = tree.DecisionTreeClassifier()
+dt = DecisionTreeClassifier()
 
 # fit Decision Tree to Data
 dt = dt.fit(iris.data, iris.target)
 
 # visualize decision tree
 # tree visualization
-dot_data = tree.export_graphviz(dt, out_file=None,
+dot_data = export_graphviz(dt, out_file=None,
                                 feature_names=iris.feature_names,
                                 class_names=iris.target_names,
                                 filled=True, rounded=True,
@@ -43,7 +43,7 @@ for pairidx, pair in enumerate([[0, 1], [0, 2], [0, 3],
     y = iris.target
 
     # Train
-    clf = tree.DecisionTreeClassifier().fit(X, y)
+    clf = DecisionTreeClassifier().fit(X, y)
 
     # Plot the decision boundary
     plt.subplot(2, 3, pairidx + 1)

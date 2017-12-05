@@ -11,6 +11,7 @@ sigma = 1
 p_x_gaussian = 1/(sigma * np.sqrt(2 * np.pi)) * np.exp(- (x - u)**2 / (2 * sigma**2))
 
 plt.plot(x, p_x_gaussian)
+plt.title("Guassian Probability Distribution")
 plt.show()
 plt.close()
 
@@ -23,5 +24,6 @@ df = 1
 p_x_chi_sq = stats.chi2.pdf(x, df)
 
 plt.plot(x, p_x_chi_sq)
+plt.title("Chi Squared Probability Distribution")
 plt.show()
 plt.close()

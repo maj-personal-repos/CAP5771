@@ -2,17 +2,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.model_selection import cross_val_score
 import graphviz
+from util import visualize_iris
 
 
 # load iris petal data set
 iris = load_iris()
+
+X = iris.data
+y = iris.target
+
+
 
 # create Decision Tree Classifier object
 dt = DecisionTreeClassifier()
 
 # fit Decision Tree to Data
 dt = dt.fit(iris.data, iris.target)
+
+# look at the importance of each feature
+print(dt.feature_importances_)
+print(dt.score(X, y))
 
 # visualize decision tree
 # tree visualization
@@ -25,6 +36,12 @@ dot_data = export_graphviz(dt, out_file=None,
 
 graph = graphviz.Source(dot_data)
 graph.render("iris")
+
+# run some cross validation
+dt1 = DecisionTreeClassifier()
+
+print(cross_val_score(dt1, X, y, cv=10))
+
 
 # decision surface - this will plot the decision surface of a decision tree on pairs of features of the iris dataset
 # for each pair of iris features, the decision tree learns the decision boundaries made of combinations of simple
@@ -74,4 +91,7 @@ plt.show()
 
 
 
+
+
+visualize_iris()
 

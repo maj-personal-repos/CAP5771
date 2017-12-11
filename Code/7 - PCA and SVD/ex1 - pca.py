@@ -10,13 +10,10 @@ from sklearn.pipeline import make_pipeline
 RANDOM_STATE = 42
 FIG_SIZE = (10, 7)
 
-
 features, target = load_wine(return_X_y=True)
 
 # Make a train/test split using 30% test size
-X_train, X_test, y_train, y_test = train_test_split(features, target,
-                                                    test_size=0.30,
-                                                    random_state=RANDOM_STATE)
+X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.30, random_state=RANDOM_STATE)
 
 # Fit to data and predict using pipelined GNB and PCA.
 unscaled_clf = make_pipeline(PCA(n_components=2), GaussianNB())

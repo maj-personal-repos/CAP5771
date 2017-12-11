@@ -1,6 +1,6 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.tokenize import RegexpTokenizer
-from nltk.stem import LancasterStemmer
+# from nltk.tokenize import RegexpTokenizer
+# from nltk.stem import LancasterStemmer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import pairwise_distances
@@ -34,15 +34,19 @@ print()
 
 vectorizer = TfidfVectorizer(stop_words='english', use_idf=True, smooth_idf=True)\
 
-svd_model = TruncatedSVD(n_components=500, algorithm='randomized', n_iter=10, random_state=42)
+svd_model = TruncatedSVD(n_components=50, algorithm='randomized', n_iter=10, random_state=42)
 
 svd_transformer = Pipeline([('tfidf', vectorizer), ('svd', svd_model)])
 
 svd_matrix = svd_transformer.fit_transform(document_corpus)
 
+print(svd_matrix.shape)
+
 query_vector = svd_transformer.transform(query)
 
 distance_matrix = pairwise_distances(query_vector, svd_matrix, metric='cosine', n_jobs=-1)
+
+print(min(distance_matrix[0, :]))
 
 best_match_index = np.where(distance_matrix[0, :] == min(distance_matrix[0, :]))
 

@@ -30,7 +30,7 @@ for n in range_n_clusters:
 
     sil_avg.append(siloutte_avg)
 
-plt.scatter(range_n_clusters, sil_avg)
+plt.plot(range_n_clusters, sil_avg)
 plt.show()
 
 # k-means with optimal clusters from above

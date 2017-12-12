@@ -10,54 +10,62 @@ batch_size = 100
 
 # declare the training data placeholders
 # input x - for 28 x 28 pixels = 784
-x = tf.placeholder(tf.float32, [None, 784])
+x = tf.placeholder(tf.float32, [None, 784], name="x")
 
 # now declare the output data placeholder - 10 digits
-y = tf.placeholder(tf.float32, [None, 10])
+y = tf.placeholder(tf.float32, [None, 10], name="labels")
 
-# now declare the weights connecting the input to the hidden layer
-W1 = tf.Variable(tf.random_normal([784, 300], stddev=0.03), name='W1')
-b1 = tf.Variable(tf.random_normal([300]), name='b1')
-# and the weights connecting the hidden layer to the output layer
-W2 = tf.Variable(tf.random_normal([300, 10], stddev=0.03), name='W2')
-b2 = tf.Variable(tf.random_normal([10]), name='b2')
+# define first layer - relu activated hidden layer
+with tf.name_scope("hidden_layer"):
+    W1 = tf.Variable(tf.random_normal([784, 300], stddev=0.03), name='W1')
+    b1 = tf.Variable(tf.random_normal([300]), name='b1')
+    hidden_out = tf.add(tf.matmul(x, W1), b1)
+    hidden_out = tf.nn.relu(hidden_out)
 
-# calculate the output of the hidden layer
-hidden_out = tf.add(tf.matmul(x, W1), b1)
-hidden_out = tf.nn.relu(hidden_out)
+# define the output layer - softmax activated output layer
+with tf.name_scope("output_layer"):
+    W2 = tf.Variable(tf.random_normal([300, 10], stddev=0.03), name='W2')
+    b2 = tf.Variable(tf.random_normal([10]), name='b2')
+    y_ = tf.nn.softmax(tf.add(tf.matmul(hidden_out, W2), b2))
 
-# now calculate the hidden layer output - in this case, let's use a softmax activated
-# output layer
-y_ = tf.nn.softmax(tf.add(tf.matmul(hidden_out, W2), b2))
-
-y_clipped = tf.clip_by_value(y_, 1e-10, 0.9999999)
-cross_entropy = -tf.reduce_mean(tf.reduce_sum(y * tf.log(y_clipped) + (1 - y) * tf.log(1 - y_clipped), axis=1))
+with tf.name_scope('xent'):
+    y_clipped = tf.clip_by_value(y_, 1e-10, 0.9999999)
+    cross_entropy = -tf.reduce_mean(tf.reduce_sum(y * tf.log(y_clipped) + (1 - y) * tf.log(1 - y_clipped), axis=1))
+    tf.summary.scalar('xent', cross_entropy)
 
 # add an optimiser
-optimiser = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cross_entropy)
-
-# finally setup the initialisation operator
-init_op = tf.global_variables_initializer()
+with tf.name_scope('train'):
+    optimiser = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cross_entropy)
 
 # define an accuracy assessment operation
-correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+with tf.name_scope('train'):
+    correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    tf.summary.scalar('accuracy', accuracy)
 
-# start training
-# start the session
-with tf.Session() as sess:
-   # initialise the variables
-   sess.run(init_op)
-   total_batch = int(len(mnist.train.labels) / batch_size)
+# Initialize
+sess = tf.Session()
+init_op = tf.global_variables_initializer()
+sess.run(init_op)
+merged_summary = tf.summary.merge_all()
+writer = tf.summary.FileWriter('/tmp/3_layer_mnist/demo/1')
+writer.add_graph(sess.graph)
 
-   for epoch in range(epochs):
-        avg_cost = 0
-        for i in range(total_batch):
-            batch_x, batch_y = mnist.train.next_batch(batch_size=batch_size)
-            _, c = sess.run([optimiser, cross_entropy], feed_dict={x: batch_x, y: batch_y})
-            avg_cost += c / total_batch
-        print("Epoch:", (epoch + 1), "cost =", "{:.3f}".format(avg_cost))
+total_batch = int(len(mnist.train.labels) / batch_size)
 
-   print(sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels}))
+for epoch in range(epochs):
+    avg_cost = 0
+    for i in range(total_batch):
+        batch_x, batch_y = mnist.train.next_batch(batch_size=batch_size)
 
-# TODO add tensorboard visualization
+        if i % 5 == 0:
+            [train_accuracy, s] = sess.run([accuracy, merged_summary], feed_dict={x: batch_x, y:batch_y})
+            writer.add_summary(s, epoch*total_batch + i)
+            # print("Epoc:", (epoch + 1), "Step:", (i), "training accuracy %g" % train_accuracy)
+
+        [_, c] = sess.run([optimiser, cross_entropy], feed_dict={x: batch_x, y: batch_y})
+        avg_cost += c / total_batch
+
+    print("Epoch:", (epoch + 1), "cost =", "{:.3f}".format(avg_cost))
+
+print(sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels}))

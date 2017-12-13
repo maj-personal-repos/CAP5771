@@ -15,6 +15,10 @@ x = tf.placeholder(tf.float32, [None, 784], name="x")
 # now declare the output data placeholder - 10 digits
 y = tf.placeholder(tf.float32, [None, 10], name="labels")
 
+# add image to summary
+x_image = tf.reshape(x, [-1, 28, 28, 1])
+tf.summary.image("input", x_image, 10)
+
 # define first layer - relu activated hidden layer
 with tf.name_scope("hidden_layer"):
     W1 = tf.Variable(tf.random_normal([784, 300], stddev=0.03), name='W1')
@@ -26,7 +30,7 @@ with tf.name_scope("hidden_layer"):
 with tf.name_scope("output_layer"):
     W2 = tf.Variable(tf.random_normal([300, 10], stddev=0.03), name='W2')
     b2 = tf.Variable(tf.random_normal([10]), name='b2')
-    y_ = tf.nn.softmax(tf.add(tf.matmul(hidden_out, W2), b2))
+    y_ = tf.nn.softmax(tf.add(tf.matmul(hidden_out, W2), b2), name='y_')
 
 with tf.name_scope('xent'):
     y_clipped = tf.clip_by_value(y_, 1e-10, 0.9999999)
@@ -59,7 +63,7 @@ for epoch in range(epochs):
         batch_x, batch_y = mnist.train.next_batch(batch_size=batch_size)
 
         if i % 5 == 0:
-            [train_accuracy, s] = sess.run([accuracy, merged_summary], feed_dict={x: batch_x, y:batch_y})
+            [train_accuracy, s] = sess.run([accuracy, merged_summary], feed_dict={x: batch_x, y: batch_y})
             writer.add_summary(s, epoch*total_batch + i)
             # print("Epoc:", (epoch + 1), "Step:", (i), "training accuracy %g" % train_accuracy)
 

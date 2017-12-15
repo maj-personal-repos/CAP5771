@@ -1,6 +1,4 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
-# from nltk.tokenize import RegexpTokenizer
-# from nltk.stem import LancasterStemmer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import pairwise_distances

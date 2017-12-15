@@ -1,9 +1,4 @@
-# Authors: Gael Varoquaux
-# License: BSD 3 clause (C) INRIA 2014
-
-print(__doc__)
 from time import time
-
 import numpy as np
 from scipy import ndimage
 from matplotlib import pyplot as plt

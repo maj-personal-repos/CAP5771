@@ -26,7 +26,7 @@ print(rules)
 
 rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.25)
 
-rules["antecedant_len"] = rules["antecedants"].apply(lambda x: len(x))
+rules["antecedent_len"] = rules["antecedents"].apply(lambda x: len(x))
 
-print(rules[(rules['antecedant_len'] >= 2) & (rules['confidence'] > 0.75) &(rules['lift'] > 1.2)])
+print(rules[(rules['antecedent_len'] >= 2) & (rules['confidence'] > 0.75) &(rules['lift'] > 1.2)])
 

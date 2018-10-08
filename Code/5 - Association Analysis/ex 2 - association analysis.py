@@ -10,7 +10,7 @@ dataset = [['Milk', 'Onion', 'Nutmeg', 'Kidney Beans', 'Eggs', 'Yogurt'],
 
 
 # encode the dataset into Onehot Transactions Dataframe
-oht = OnehotTransactions()
+oht = TransactionEncoder()
 oht_array = oht.fit(dataset).transform(dataset)
 df = pd.DataFrame(oht_array, columns=oht.columns_)
 # print(df.head())
